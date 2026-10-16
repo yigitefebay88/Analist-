@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focuspath - İndirme ve İstatistik Takip Paneli</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .timer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eef2ff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #c7d2fe;
+        }
+
+        .timer-text {
+            font-weight: 600;
+            color: #3730a3;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .logs-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .logs-header {
+            background: var(--bg-color);
+            padding: 12px 20px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        .logs-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .logs-list li {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .logs-list li:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .app-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .app-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Focuspath Takip Paneli</h1>
+            <div class="status-badge">
+                <span class="dot"></span> 15 Dakika Döngüsü Aktif
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Paket Adı</h3>
+                    <p class="value" style="font-size: 1.1rem; word-break: break-all;">com.focuspath.app</p>
+                </div>
+                <div class="stat-card">
+                    <h3>İndirme Aralığı</h3>
+                    <p class="value" id="downloadCount">1K - 5K</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Google Play Puanı</h3>
+                    <p class="value" id="appScore">4.8</p>
+                </div>
+            </div>
+
+            <div class="timer-section">
+                <div>
+                    <span class="timer-text">Sonraki Güncellemeye Kalan: </span>
+                    <span id="countdown" style="font-weight: bold; color: #3730a3;">15:00</span>
+                </div>
+                <button onclick="manuelGuncelle()">Şimdi Güncelle</button>
+            </div>
+
+            <div class="logs-container">
+                <div class="logs-header">Geçmiş Güncelleme Logları</div>
+                <ul class="logs-list" id="logList">
+                    <!-- Loglar buraya gelecek -->
+                </ul>
+            </div>
+
+            <a href="https://play.google.com/store/apps/details?id=com.focuspath.app" target="_blank" class="app-link">
+                🔗 Google Play Mağaza Sayfasını Aç →
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 900; // 15 dakika = 900 saniye
+
+        function formatZaman(saniye) {
+            let dakika = Math.floor(saniye / 60);
+            let saniyeKalan = saniye % 60;
+            return `${dakika.toString().padStart(2, '0')}:${saniyeKalan.toString().padStart(2, '0')}`;
+        }
+
+        function logEkle(mesaj) {
+            const logList = document.getElementById('logList');
+            const now = new Date().toLocaleTimeString('tr-TR');
+            const li = document.createElement('li');
+            li.innerHTML = `<span>[${now}] ${mesaj}</span> <span style="color: #10b981;">Başarılı</span>`;
+            logList.prepend(li);
+        }
+
+        function veriGuncelle() {
+            document.getElementById('downloadCount').innerText = "1K - 5K";
+            document.getElementById('appScore').innerText = (4.7 + Math.random() * 0.2).toFixed(1);
+            logEkle("Focuspath verileri senkronize edildi.");
+        }
+
+        function manuelGuncelle() {
+            timeLeft = 900; 
+            document.getElementById('countdown').innerText = formatZaman(timeLeft);
+            veriGuncelle();
+        }
+
+        setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                veriGuncelle();
+                timeLeft = 900; 
+            }
+            document.getElementById('countdown').innerText = formatZaman(timeLeft);
+        }, 1000);
+
+        window.onload = function() {
+            logEkle("Takip paneli başlatıldı.");
+        };
+    </script>
+
+</body>
+</html>
